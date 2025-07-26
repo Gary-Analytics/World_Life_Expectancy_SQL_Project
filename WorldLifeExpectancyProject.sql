@@ -1,6 +1,11 @@
 # World Life Expectancy Project 
 
--- SECTION 1 - DATA CLEANING
+USE world_life_expectancy;
+
+-- STEP 1: DATA CLEANING
+
+-- Switching off SQL Safety mode to allow updates
+SET SQL_SAFE_UPDATES = 0;
 
 -- Reviewing all data
 SELECT * FROM world_life_expectancy
@@ -64,7 +69,6 @@ WHERE Status = 'Developing'
 ;
 
 -- Filling in blank Status entries for "Developing" Countries
-SET SQL_SAFE_UPDATES = 0;
 UPDATE world_life_expectancy t1
 JOIN world_life_expectancy t2
 	ON t1.Country = t2.Country
@@ -72,11 +76,9 @@ SET t1.Status = 'Developing'
 WHERE t1.Status = ''
   AND t2.Status <> ''
   AND t2.Status = 'Developing';
-SET SQL_SAFE_UPDATES = 1
 ;
 
 -- Filling in blank Status entries for "Developed" Countries
-SET SQL_SAFE_UPDATES = 0;
 UPDATE world_life_expectancy t1
 JOIN world_life_expectancy t2
 	ON t1.Country = t2.Country
@@ -84,7 +86,6 @@ SET t1.Status = 'Developed'
 WHERE t1.Status = ''
   AND t2.Status <> ''
   AND t2.Status = 'Developed';
-SET SQL_SAFE_UPDATES = 1;
 
 -- Checking nulls in Life expectancy Column
 SELECT *
@@ -123,7 +124,6 @@ WHERE t1.`Life expectancy` = ''
 ;
 
 -- Updating the Life expectancy blanks to insert the appropriate average values
-SET SQL_SAFE_UPDATES = 0;
 UPDATE world_life_expectancy t1
 JOIN world_life_expectancy t2
   ON t1.Country = t2.Country
@@ -133,10 +133,9 @@ JOIN world_life_expectancy t3
   AND t1.Year    = t3.Year + 1
 SET t1.`Life expectancy` = ROUND((t2.`Life expectancy` + t3.`Life expectancy`)/2,1)
 WHERE t1.`Life expectancy` = '';
-SET SQL_SAFE_UPDATES = 1
 ;
 
--- SECTION 1 - EXPLORATORY DATA ANALYSIS
+-- STEP 2: EXPLORATORY DATA ANALYSIS
 
 -- Checking Min and Max Life expectancy by country and Life expectancy gains
 SELECT Country, MIN(`Life expectancy`), 
@@ -215,3 +214,6 @@ SELECT Country,
        SUM(`Adult Mortality`) OVER (PARTITION BY Country ORDER BY Year) AS 'Rolling Total'
 FROM world_life_expectancy
 ;
+
+-- Switching on SQL Safety mode to stop updates
+SET SQL_SAFE_UPDATES = 0;
