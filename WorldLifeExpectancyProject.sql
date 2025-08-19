@@ -216,4 +216,4 @@ FROM world_life_expectancy
 ;
 
 -- Switching on SQL Safety mode to stop updates
-SET SQL_SAFE_UPDATES = 0;
+SET SQL_SAFE_UPDATES = 1;
